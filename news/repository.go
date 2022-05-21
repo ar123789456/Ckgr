@@ -7,7 +7,7 @@ import (
 
 type Repository interface {
 	Post(context.Context, models.News) error
-	Get(id int) (context.Context, models.News, error)
+	Get(context.Context, int) (context.Context, models.News, error)
 	Delete(context.Context, int) error
 	Update(context.Context, models.News) error
 	GetAllForClient(context.Context) ([]models.News, error)
