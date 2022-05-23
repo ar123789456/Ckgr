@@ -5,7 +5,7 @@ import (
 	"context"
 )
 
-type UseCase interface {
+type Repository interface {
 	Create(context.Context, models.Link) error
 	Delete(context.Context, string) error
 	GetAll(context.Context) ([]*models.Link, error)
