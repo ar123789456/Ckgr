@@ -56,7 +56,7 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 type getInput struct {
-	ID int `json:"id"`
+	ID string `json:"id"`
 }
 
 func (h *Handler) Get(c *gin.Context) {
@@ -134,7 +134,7 @@ type output struct {
 	Content string   `json:"content"`
 }
 
-func toNew(n models.News) output {
+func toNew(n *models.News) output {
 	return output{
 		Enable:  n.Enable,
 		Image:   n.Image,
@@ -144,7 +144,7 @@ func toNew(n models.News) output {
 	}
 }
 
-func toNews(n []models.News) []output {
+func toNews(n []*models.News) []output {
 	ret := []output{}
 	for _, v := range n {
 		ret = append(ret, toNew(v))
