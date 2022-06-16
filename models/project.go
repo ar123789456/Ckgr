@@ -1,9 +1,10 @@
 package models
 
 type Project struct {
-	Base   *Frame
+	ID     string
+	Base   Frame
 	Enable bool
-	All    []*Frame
+	All    []Frame
 }
 
 type Frame struct {
