@@ -25,6 +25,6 @@ func (uc *Usecase) Create(con context.Context, link models.Link) error {
 func (uc *Usecase) Delete(con context.Context, id string) error {
 	return uc.repository.Delete(con, id)
 }
-func (uc *Usecase) GetAll(con context.Context) ([]*models.Link, error) {
+func (uc *Usecase) GetAll(con context.Context) ([]models.Link, error) {
 	return uc.repository.GetAll(con)
 }

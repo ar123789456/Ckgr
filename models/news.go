@@ -1,7 +1,7 @@
 package models
 
 type News struct {
-	ID      string
+	ID      int
 	Enable  bool
 	Image   string
 	Tags    []string

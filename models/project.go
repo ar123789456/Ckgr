@@ -1,7 +1,7 @@
 package models
 
 type Project struct {
-	ID     string
+	ID     int
 	Base   Frame
 	Enable bool
 	All    []Frame

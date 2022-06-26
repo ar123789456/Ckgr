@@ -23,7 +23,7 @@ func (uc *Usecase) Post(c context.Context, n models.News) error {
 	uc.logger.InfoLogger.Println("usecase Post")
 	return uc.repository.Post(c, n)
 }
-func (uc *Usecase) Get(c context.Context, id string) (*models.News, error) {
+func (uc *Usecase) Get(c context.Context, id string) (models.News, error) {
 	uc.logger.InfoLogger.Println("usecase Get")
 	return uc.repository.Get(c, id)
 }
@@ -35,11 +35,11 @@ func (uc *Usecase) Update(c context.Context, n models.News) error {
 	uc.logger.InfoLogger.Println("usecase Update")
 	return uc.repository.Update(c, n)
 }
-func (uc *Usecase) GetAllForClient(c context.Context) ([]*models.News, error) {
+func (uc *Usecase) GetAllForClient(c context.Context) ([]models.News, error) {
 	uc.logger.InfoLogger.Println("usecase Client Get")
 	return uc.repository.GetAllForClient(c)
 }
-func (uc *Usecase) GetAllForAdmin(c context.Context) ([]*models.News, error) {
+func (uc *Usecase) GetAllForAdmin(c context.Context) ([]models.News, error) {
 	uc.logger.InfoLogger.Println("usecase Admin Get")
 	return uc.repository.GetAllForAdmin(c)
 }

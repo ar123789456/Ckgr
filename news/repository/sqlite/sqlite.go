@@ -1,113 +1,144 @@
 package sqlite
 
 import (
+	"bytes"
 	"cgr/models"
 	"context"
+	"encoding/binary"
+	"encoding/gob"
+	"errors"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	mongo "go.mongodb.org/mongo-driver/mongo"
+	"github.com/boltdb/bolt"
 )
 
 type Repository struct {
-	db *mongo.Collection
+	db *bolt.DB
 }
 
-func NewRepository(db *mongo.Collection) *Repository {
+func NewRepository(db *bolt.DB) *Repository {
 	return &Repository{
 		db: db,
 	}
 }
 
-type newsMongo struct {
-	ID      primitive.ObjectID `bson:"_id,omitempty"`
-	Enable  bool               `bson:"enable"`
-	Image   string             `bson:"image"`
-	Tags    []string           `bson:"tags"`
-	Title   string             `bson:"title"`
-	Content string             `bson:"content"`
-}
+var errBucketNotFound = errors.New("Bucket not found")
+var errNewsNotFound = errors.New("news not found")
 
 func (r *Repository) Post(con context.Context, news models.News) error {
-	mongoNews := toNewsMongo(news)
-	_, err := r.db.InsertOne(con, mongoNews)
-	return err
+	return r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("news"))
+		if b == nil {
+			return errBucketNotFound
+		}
+		id, err := b.NextSequence()
+		if err != nil {
+			return err
+		}
+		news.ID = int(id)
+		buff, err := encode(news)
+		if err != nil {
+			return err
+		}
+		return b.Put(itob(int(id)), buff.Bytes())
+	})
 }
-func (r *Repository) Get(con context.Context, id string) (*models.News, error) {
-	news := new(newsMongo)
-	idb, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return nil, err
-	}
-	err = r.db.FindOne(con, bson.M{
-		"_id": idb,
-	}).Decode(news)
-	return toNewsModel(news), err
-}
-func (r *Repository) Delete(con context.Context, id string) error {
-	objID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
+func (r *Repository) Get(con context.Context, id int) (models.News, error) {
+	var news models.News
+	err := r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("news"))
+		if b == nil {
+			return errBucketNotFound
+		}
+		temp := b.Get(itob(id))
+		buff := bytes.NewBuffer(temp)
+		var err error
+		news, err = decode(*buff)
 		return err
-	}
-	_, err = r.db.DeleteOne(con, bson.M{"_id": objID})
-	return err
+	})
+	return news, err
+}
+func (r *Repository) Delete(con context.Context, id int) error {
+	return r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("news"))
+		return b.Delete(itob(id))
+	})
 }
 func (r *Repository) Update(con context.Context, news models.News) error {
-	objID, _ := primitive.ObjectIDFromHex(news.ID)
-	update := bson.M{"$set": bson.M{"enable": news.Enable, "image": news.Image, "tags": news.Tags, "title": news.Title, "content": news.Content}}
-	_, err := r.db.UpdateByID(con, objID, update)
-	return err
-}
-func (r *Repository) GetAllForClient(con context.Context) ([]*models.News, error) {
-	cur, err := r.db.Find(con, bson.M{"enable": true})
-	if err != nil {
-		return []*models.News{}, err
-	}
-	out := []*models.News{}
-	for cur.Next(con) {
-		news := new(newsMongo)
-		err := cur.Decode(news)
-		if err != nil {
-			return []*models.News{}, err
+	return r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("news"))
+		if b == nil {
+			return errBucketNotFound
 		}
-		out = append(out, toNewsModel(news))
-	}
-	return out, nil
-}
-func (r *Repository) GetAllForAdmin(con context.Context) ([]*models.News, error) {
-	cur, err := r.db.Find(con, bson.M{})
-	if err != nil {
-		return []*models.News{}, err
-	}
-	out := []*models.News{}
-	for cur.Next(con) {
-		news := new(newsMongo)
-		err := cur.Decode(news)
-		if err != nil {
-			return []*models.News{}, err
+		n := b.Get(itob(news.ID))
+		if n == nil {
+			return errNewsNotFound
 		}
-		out = append(out, toNewsModel(news))
-	}
-	return out, nil
+		err := b.Delete(itob(news.ID))
+		if err != nil {
+			return err
+		}
+		buff, err := encode(news)
+		return b.Put(itob(int(news.ID)), buff.Bytes())
+	})
+}
+func (r *Repository) GetAllForClient(con context.Context) ([]models.News, error) {
+	var news []models.News
+	err := r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("news"))
+		if b == nil {
+			return errBucketNotFound
+		}
+		return b.ForEach(func(k, v []byte) error {
+			buff := bytes.NewBuffer(v)
+			newsTemp, err := decode(*buff)
+			if err != nil {
+				return err
+			}
+			if !newsTemp.Enable {
+				return nil
+			}
+			news = append(news, newsTemp)
+			return nil
+		})
+	})
+	return news, err
+}
+func (r *Repository) GetAllForAdmin(con context.Context) ([]models.News, error) {
+	var news []models.News
+	err := r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("news"))
+		if b == nil {
+			return errBucketNotFound
+		}
+		return b.ForEach(func(k, v []byte) error {
+			buff := bytes.NewBuffer(v)
+			newsTemp, err := decode(*buff)
+			if err != nil {
+				return err
+			}
+			news = append(news, newsTemp)
+			return nil
+		})
+	})
+	return news, err
 }
 
-func toNewsMongo(news models.News) *newsMongo {
-	return &newsMongo{
-		Enable:  news.Enable,
-		Image:   news.Image,
-		Tags:    news.Tags,
-		Title:   news.Title,
-		Content: news.Content,
-	}
+func decode(buff bytes.Buffer) (models.News, error) {
+	out := models.News{}
+	dec := gob.NewDecoder(&buff)
+	err := dec.Decode(&out)
+	return out, err
 }
 
-func toNewsModel(news *newsMongo) *models.News {
-	return &models.News{
-		ID:      news.ID.Hex(),
-		Enable:  news.Enable,
-		Image:   news.Image,
-		Tags:    news.Tags,
-		Title:   news.Title,
-		Content: news.Content,
-	}
+func encode(p models.News) (bytes.Buffer, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(p)
+	return buf, err
+}
+
+func itob(v int) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(v))
+	return b
 }

@@ -8,5 +8,5 @@ import (
 type UseCase interface {
 	Create(context.Context, models.Link) error
 	Delete(context.Context, string) error
-	GetAll(context.Context) ([]*models.Link, error)
+	GetAll(context.Context) ([]models.Link, error)
 }

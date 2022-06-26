@@ -79,7 +79,7 @@ func toLink(inp *input) models.Link {
 	}
 }
 
-func toLinkOut(all []*models.Link) []input {
+func toLinkOut(all []models.Link) []input {
 	ret := []input{}
 	for _, v := range all {
 		tem := input{
