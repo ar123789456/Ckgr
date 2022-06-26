@@ -23,11 +23,11 @@ func (uc *Usecase) Post(c context.Context, n models.News) error {
 	uc.logger.InfoLogger.Println("usecase Post")
 	return uc.repository.Post(c, n)
 }
-func (uc *Usecase) Get(c context.Context, id string) (models.News, error) {
+func (uc *Usecase) Get(c context.Context, id int) (models.News, error) {
 	uc.logger.InfoLogger.Println("usecase Get")
 	return uc.repository.Get(c, id)
 }
-func (uc *Usecase) Delete(c context.Context, id string) error {
+func (uc *Usecase) Delete(c context.Context, id int) error {
 	uc.logger.InfoLogger.Println("usecase Delete")
 	return uc.repository.Delete(c, id)
 }

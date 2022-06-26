@@ -55,6 +55,10 @@ func (uc *Usecase) Update(c context.Context, u models.User) error {
 	return uc.repository.Update(c, u)
 }
 
+func (uc *Usecase) GetByToken(c context.Context, token string) (bool, error) {
+	return uc.repository.GetByToken(c, token)
+}
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err

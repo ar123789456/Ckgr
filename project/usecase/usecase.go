@@ -35,11 +35,11 @@ func (uc *Usecase) Update(c context.Context, n models.Project) error {
 	uc.logger.InfoLogger.Println("usecase Update")
 	return uc.repository.Update(c, n)
 }
-func (uc *Usecase) GetAllForClient(c context.Context) ([]models.Project, error) {
+func (uc *Usecase) GetAllforClient(c context.Context) ([]models.Project, error) {
 	uc.logger.InfoLogger.Println("usecase Client Get")
 	return uc.repository.GetAllforClient(c)
 }
-func (uc *Usecase) GetAllForAdmin(c context.Context) ([]models.Project, error) {
+func (uc *Usecase) GetAllforAdmin(c context.Context) ([]models.Project, error) {
 	uc.logger.InfoLogger.Println("usecase Admin Get")
-	return uc.repository.GetAllforAdmin(c)
+	return uc.repository.GetAllForAdmin(c)
 }

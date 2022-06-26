@@ -45,7 +45,7 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 type delInp struct {
-	ID string `json:"id"`
+	ID int `json:"id"`
 }
 
 func (h *Handler) Delete(c *gin.Context) {

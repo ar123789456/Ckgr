@@ -81,7 +81,7 @@ func (r *Repository) Update(con context.Context, project models.Project) error {
 		return b.Put(itob(int(project.ID)), buff.Bytes())
 	})
 }
-func (r *Repository) GetAllForClient(con context.Context) ([]models.Project, error) {
+func (r *Repository) GetAllforClient(con context.Context) ([]models.Project, error) {
 	var news []models.Project
 	err := r.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("project"))

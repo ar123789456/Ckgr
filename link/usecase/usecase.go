@@ -22,7 +22,7 @@ func NewUsecase(repository link.Repository, logger *logger.Logger) *Usecase {
 func (uc *Usecase) Create(con context.Context, link models.Link) error {
 	return uc.repository.Create(con, link)
 }
-func (uc *Usecase) Delete(con context.Context, id string) error {
+func (uc *Usecase) Delete(con context.Context, id int) error {
 	return uc.repository.Delete(con, id)
 }
 func (uc *Usecase) GetAll(con context.Context) ([]models.Link, error) {

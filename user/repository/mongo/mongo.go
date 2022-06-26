@@ -119,7 +119,7 @@ func (r *Repository) Get(con context.Context, name string) (models.User, error) 
 		b := tx.Bucket([]byte("user"))
 		b1 := tx.Bucket([]byte("user_name"))
 
-		id := b1.Get([]byte("name"))
+		id := b1.Get([]byte(name))
 		if id == nil {
 			return errUserNotFound
 		}

@@ -56,7 +56,7 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 type getInput struct {
-	ID string `json:"id"`
+	ID int `json:"id"`
 }
 
 func (h *Handler) Get(c *gin.Context) {
