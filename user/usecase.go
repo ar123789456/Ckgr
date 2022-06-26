@@ -6,7 +6,8 @@ import (
 )
 
 type UseCase interface {
-	Create(context.Context, *models.User) error
+	LogIn(context.Context, models.User) (string, error)
+	Create(context.Context, models.User) error
 	Delete(context.Context, int) error
-	Update(context.Context, *models.User) error
+	Update(context.Context, models.User) error
 }

@@ -19,7 +19,7 @@ func NewHandler(usecase project.UseCase) *Handler {
 }
 
 type createInput struct {
-	ID     string  `json:"id"`
+	ID     int     `json:"id"`
 	Base   frame   `json:"base"`
 	Enable bool    `json:"enable"`
 	All    []frame `json:"all"`
@@ -45,7 +45,7 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 type getInput struct {
-	ID string `json:"id"`
+	ID int `json:"id"`
 }
 
 func (h *Handler) Get(c *gin.Context) {
@@ -106,7 +106,7 @@ func (h *Handler) GetAllForAdmin(c *gin.Context) {
 }
 
 type output struct {
-	ID     string  `json:"id"`
+	ID     int     `json:"id"`
 	Base   frame   `json:"base"`
 	Enable bool    `json:"enable"`
 	All    []frame `json:"all"`
@@ -127,6 +127,7 @@ func bindOutputProject(proj models.Project) output {
 	}
 
 	return output{
+		ID:     proj.ID,
 		Base:   bindOutPutFrame(proj.Base),
 		Enable: proj.Enable,
 		All:    all,
