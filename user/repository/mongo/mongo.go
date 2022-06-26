@@ -132,6 +132,21 @@ func (r *Repository) Get(con context.Context, name string) (models.User, error) 
 	return user, err
 }
 
+func (r *Repository) GetByToken(c context.Context, token string) (bool, error) {
+	access := false
+	err := r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("token"))
+		b.ForEach(func(k, v []byte) error {
+			if string(v) == token {
+				access = true
+			}
+			return nil
+		})
+		return nil
+	})
+	return access, err
+}
+
 func decode(buff bytes.Buffer) (models.User, error) {
 	out := models.User{}
 	dec := gob.NewDecoder(&buff)
