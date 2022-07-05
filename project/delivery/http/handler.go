@@ -25,9 +25,9 @@ type createInput struct {
 	All    []frame `json:"all"`
 }
 type frame struct {
-	Title   string `json:"title"`
-	Image   string `json:"image"`
-	Content string `json:"content"`
+	Title   map[models.Language]string `json:"title"`
+	Image   string                     `json:"image"`
+	Content map[models.Language]string `json:"content"`
 }
 
 func (h *Handler) Create(c *gin.Context) {

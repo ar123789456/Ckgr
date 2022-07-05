@@ -23,7 +23,7 @@ func NewUsecase(repository user.Repository) *Usecase {
 var errWrPass = errors.New("Wrong Password")
 
 func (uc *Usecase) LogIn(c context.Context, p models.User) (string, error) {
-	user, err := uc.repository.Get(c, p.FullName)
+	user, err := uc.repository.Get(c, p.Nick)
 	if err != nil {
 		return "", err
 	}

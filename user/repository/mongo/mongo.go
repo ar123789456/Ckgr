@@ -117,7 +117,7 @@ func (r *Repository) Get(con context.Context, name string) (models.User, error) 
 	var user models.User
 	err := r.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("user"))
-		b1 := tx.Bucket([]byte("user_name"))
+		b1 := tx.Bucket([]byte("user_nick"))
 
 		id := b1.Get([]byte(name))
 		if id == nil {

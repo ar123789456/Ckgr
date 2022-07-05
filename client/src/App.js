@@ -1,12 +1,15 @@
 // import logo from './logo.svg';
 import Header from './components/header.jsx'
 import AddNews from './components/addNews.jsx';
+import Contact from './components/contact.jsx';
+
 import './App.css';
 import {
     BrowserRouter,
     Routes,
     Route,
   } from "react-router-dom";
+import LinkCreate from './components/linkCreate.jsx';
 
 function App() {
   return (
@@ -27,7 +30,7 @@ function App() {
 
             <Route path='/people' element={<p>People</p>} />
 
-            <Route path='/contact' element={<p>Contact</p>} />
+            <Route path='/contact' element={<Contact/>} />
 
             <Route path='/admin' element={<p>Admin</p>} />
             <Route path='/admin/signin' element={<p>SignIn</p>} />
@@ -35,7 +38,7 @@ function App() {
             <Route path='/admin/add/projects' element={<p>add Project</p>} />
             <Route path='/admin/add/news' element={<AddNews/>} />
             <Route path='/admin/add/user' element={<p>add user</p>} />
-            <Route path='/admin/add/contact' element={<p>add contact</p>} />
+            <Route path='/admin/add/contact' element={<LinkCreate/>} />
 
 
             <Route path="*" element={

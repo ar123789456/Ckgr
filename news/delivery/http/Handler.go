@@ -26,11 +26,11 @@ func NewHandler(usecase news.UseCase, log *logger.Logger) *Handler {
 }
 
 type createInput struct {
-	Image_url string   `json:"image"`
-	Tags      []string `json:"tags"`
-	Title     string   `json:"title"`
-	Content   string   `json:"content"`
-	Enable    bool     `json:"enable"`
+	Image_url string                       `json:"image"`
+	Tags      []map[models.Language]string `json:"tags"`
+	Title     map[models.Language]string   `json:"title"`
+	Content   map[models.Language]string   `json:"content"`
+	Enable    bool                         `json:"enable"`
 }
 
 func (h *Handler) Create(c *gin.Context) {
@@ -127,20 +127,20 @@ func (h *Handler) GetAllForAdmin(c *gin.Context) {
 }
 
 type output struct {
-	Enable  bool
-	Image   string   `json:"image"`
-	Tags    []string `json:"tags"`
-	Title   string   `json:"title"`
-	Content string   `json:"content"`
+	Image_url string                       `json:"image"`
+	Tags      []map[models.Language]string `json:"tags"`
+	Title     map[models.Language]string   `json:"title"`
+	Content   map[models.Language]string   `json:"content"`
+	Enable    bool                         `json:"enable"`
 }
 
 func toNew(n models.News) output {
 	return output{
-		Enable:  n.Enable,
-		Image:   n.Image,
-		Tags:    n.Tags,
-		Title:   n.Title,
-		Content: n.Content,
+		Enable:    n.Enable,
+		Image_url: n.Image,
+		Tags:      n.Tags,
+		Title:     n.Title,
+		Content:   n.Content,
 	}
 }
 

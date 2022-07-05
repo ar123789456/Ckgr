@@ -23,7 +23,7 @@ func NewHandler(usecase user.UseCase) *Handler {
 }
 
 type logInInput struct {
-	FullName string `json:"name"`
+	Nick     string `json:"nick"`
 	Password string `json:"password"`
 }
 
@@ -34,7 +34,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 	uuid, err := h.usecase.LogIn(c.Request.Context(), models.User{
-		FullName: login.FullName,
+		Nick:     login.Nick,
 		Password: login.Password,
 	})
 	if err != nil {
@@ -46,9 +46,10 @@ func (h *Handler) LogIn(c *gin.Context) {
 }
 
 type createInput struct {
-	FullName string `json:"name"`
-	Special  string `json:"special"`
-	Password string `json:"password"`
+	Nick     string                     `json:"nick"`
+	FullName map[models.Language]string `json:"name"`
+	Special  map[models.Language]string `json:"special"`
+	Password string                     `json:"password"`
 }
 
 func (h *Handler) Create(c *gin.Context) {
@@ -58,6 +59,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 	err := h.usecase.Create(c.Request.Context(), models.User{
+		Nick:     user.Nick,
 		FullName: user.FullName,
 		Password: user.Password,
 		Special:  user.Special,
@@ -83,10 +85,10 @@ func (h *Handler) Delete(c *gin.Context) {
 }
 
 type updateInput struct {
-	ID       int    `json:"id"`
-	FullName string `json:"name"`
-	Special  string `json:"special"`
-	Password string `json:"password"`
+	ID       int                        `json:"id"`
+	FullName map[models.Language]string `json:"name"`
+	Special  map[models.Language]string `json:"special"`
+	Password string                     `json:"password"`
 }
 
 func (h *Handler) Update(c *gin.Context) {

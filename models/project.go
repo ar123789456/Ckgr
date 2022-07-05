@@ -9,7 +9,7 @@ type Project struct {
 
 type Frame struct {
 	ID      int
-	Title   string
+	Title   map[Language]string
 	Image   string
-	Content string
+	Content map[Language]string
 }
