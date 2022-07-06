@@ -48,7 +48,7 @@ func NewApp() *App {
 		CORSMiddleware(),
 	)
 	//file serve
-	router.StaticFS("/more_static", http.Dir("./"))
+	router.StaticFS("/static", http.Dir("./media/"))
 
 	logg := logger.NewLogger()
 
